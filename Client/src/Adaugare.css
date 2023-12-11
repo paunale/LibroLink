@@ -1,0 +1,69 @@
+.adaugare-container {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Patratul negru cu opacitate */
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .adaugare-background-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-image: url('./poza_fundal.jpg'); /* Înlocuiește cu calea corectă către imaginea de fundal */
+    background-size: cover;
+    filter: blur(10px);
+  }
+  
+  .adaugare-content {
+    z-index: 1;
+    padding: 150px 50px 50px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+  }
+  
+  .adaugare-input {
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #3c2a21; /* Culoarea chenarului input-ului */
+    border-radius: 20px;
+    color: #000;
+  }
+  
+  .adaugare-button {
+    padding: 10px 20px;
+    background-color: #3c2a21;
+    color: #e5e5cb;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .adaugare-button:hover {
+    background-color: #e5e5cb;
+    color: #3c2a21;
+  }
+  
+  .scris-titlu {
+    color: #e5e5cb; /* Culoarea dorită pentru text */
+  }
+
+  .scris{
+    color: #00000000; /* Culoarea dorită pentru text */
+  }
+
+  .success-message {
+    color: #4caf50; /* Culoare verde */
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  

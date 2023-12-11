@@ -1,0 +1,54 @@
+.recomandari-container {
+    height: 100vh;
+    background-color: #d5cea3;
+    display: flex;
+    flex-direction: column; /* Acomodează conținutul în coloană */
+    justify-content: flex-start; /* Așează conținutul în partea de sus a containerului */
+    align-items: center;
+    position: relative;
+  }
+
+  .recomandari-background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(10px);
+  }  
+  
+  .recomandari-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('./poza_fundal.jpg'); /* Înlocuiește cu calea corectă către imaginea ta */
+    background-size: cover;
+    filter: blur(10px); /* Ajustează valoarea blurului după preferință */
+  }
+  
+  .recomandari-content {
+    z-index: 1;
+    padding: 0px;
+    text-align: center;
+    margin-top: auto;
+  }
+  
+  .recomandari-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Acomodează elementele pe mai multe linii dacă spațiul nu este suficient */
+    justify-content: center; /* Așează elementele în centru orizontal */
+  }
+  
+  .recomandari-book {
+    background-color: #d5cea3;
+    border: 1px solid black;
+    padding: 20px;
+    margin: 10px; /* Ajustează marginea între cărți */
+    border-radius: 30px;
+    flex-basis: calc(33.33% - 20px);
+  }
+  

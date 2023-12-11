@@ -1,24 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Header from './components/Header';
-import { useState } from 'react';
 import RegisterForm from './components/RegisterForm';
-type Props = {}
+import './Inregistrare.css'; // Asigură-te că ai importat fișierul CSS
 
-
-function Inregistrare({}: Props) {
+const Inregistrare = () => {
   return (
-    <div className="h-screen bg-[#D5CEA3]">
-      <div className="relative flex flex-col justify-between gap-y-2 top-44 items-center">
-          <h1 className="text-3xl pb-3 text-center" style={{ fontWeight: 'bold' }}>LibroLink</h1>
-          <RegisterForm/>
+    <div className="register-container">
+      <div className="register-background-image"></div>
+      <div className="blur-overlay"></div>
+      <div className="register-box">
+        <h1 className="logo">LibroLink</h1>
+        <div className="register-content">
+          <h2 className="title scris-ing">Creează-ți cont</h2>
+          <RegisterForm />
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Inregistrare;

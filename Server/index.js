@@ -364,6 +364,7 @@ const ensureAuthenticated = (req, res, next) => {
 };
 
 
+//Genuri preferate
 app.post('/update-genres', ensureAuthenticated, async (req, res) => {
   const { genres } = req.body;
 
@@ -387,6 +388,7 @@ app.post('/update-genres', ensureAuthenticated, async (req, res) => {
 });
 
 
+//Recomandari
 app.get('/recommended-books', ensureAuthenticated, async (req, res) => {
   // Ensure the user is authenticated
   if (!req.isAuthenticated()) {
@@ -457,6 +459,10 @@ app.post('/makereview/:bookId', ensureAuthenticated, async (req, res) => {
   const { bookId } = req.params;
   const { text, rating } = req.body;
 
+  console.log('Received review submission for bookId:', bookId);
+  console.log('Review Text:', text);
+  console.log('Rating:', rating);
+
   // Ensure the user is authenticated
   if (!req.isAuthenticated()) {
     return res.status(401).json({ success: false, message: 'User not authenticated' });
@@ -477,11 +483,169 @@ app.post('/makereview/:bookId', ensureAuthenticated, async (req, res) => {
   }
 });
 
+
+//Favorite
+// Adaugă la sfârșitul fișierului index.js
+
+app.post('/update-favorite-books', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.ID;
+  const { bookId, action } = req.body;
+
+  // Query pentru a obține și actualiza lista de cărți favorite ale utilizatorului
+  const getUserFavoriteBooksQuery = 'SELECT favorite_books FROM users WHERE ID = ?';
+  const updateUserFavoriteBooksQuery = 'UPDATE users SET favorite_books = ? WHERE ID = ?';
+
+  try {
+    const [results] = await db.execute(getUserFavoriteBooksQuery, [userId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const userFavoriteBooks = JSON.parse(results[0].favorite_books || '[]');
+
+    // Actualizează lista de cărți favorite în funcție de acțiune (adăugare sau eliminare)
+    if (action === 'add' && !userFavoriteBooks.includes(bookId)) {
+      userFavoriteBooks.push(bookId);
+    } else if (action === 'remove' && userFavoriteBooks.includes(bookId)) {
+      userFavoriteBooks.splice(userFavoriteBooks.indexOf(bookId), 1);
+    }
+
+    // Updatează lista de cărți favorite în baza de date
+    await db.execute(updateUserFavoriteBooksQuery, [
+      JSON.stringify(userFavoriteBooks),
+      userId,
+    ]);
+
+    // Re-fetch user's favorite books after the update
+    const [updatedResults] = await db.execute(getUserFavoriteBooksQuery, [userId]);
+    const updatedFavoriteBooks = JSON.parse(updatedResults[0].favorite_books || '[]');
+
+    res.status(200).json({ success: true, message: 'Favorite books updated successfully', updatedFavoriteBooks });
+  } catch (error) {
+    console.error('Error updating user favorite books:', error);
+    res.status(500).json({ success: false, message: 'Error updating user favorite books' });
+  }
+});
+
+
+app.get('/favorite-books', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.ID;
+
+  // Query pentru a obține lista de cărți favorite ale utilizatorului din coloana 'favorite_books'
+  const getUserFavoriteBooksQuery = 'SELECT favorite_books FROM users WHERE ID = ?';
+
+  try {
+    const [results] = await db.execute(getUserFavoriteBooksQuery, [userId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const userFavoriteBooks = JSON.parse(results[0].favorite_books || '[]');
+    res.status(200).json(userFavoriteBooks);
+  } catch (error) {
+    console.error('Error fetching user favorite books:', error);
+    res.status(500).json({ success: false, message: 'Error fetching user favorite books' });
+  }
+});
+
+app.get('/reviews/:bookId', async (req, res) => {
+  const { bookId } = req.params;
+
+  if (!bookId) {
+    return res.status(400).json({ success: false, message: 'BookId parameter is missing' });
+  }
+
+  const query = 'SELECT * FROM reviews WHERE book_id = ?';
+
+  try {
+    const [results] = await db.execute(query, [bookId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'Reviews not found for this book' });
+    }
+
+    const reviews = results;
+    res.status(200).json({ success: true, reviews });
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).json({ success: false, message: 'Error fetching reviews' });
+  }
+});
+
+
+
+// Update "Citeste Mai Tarziu" Books
+app.post('/update-read-later-books', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.ID;
+  const { bookId, action } = req.body;
+
+  // Query pentru a obține și actualiza lista de cărți "Citeste Mai Tarziu" ale utilizatorului
+  const getUserReadLaterBooksQuery = 'SELECT read_later_books FROM users WHERE ID = ?';
+  const updateUserReadLaterBooksQuery = 'UPDATE users SET read_later_books = ? WHERE ID = ?';
+
+  try {
+    const [results] = await db.execute(getUserReadLaterBooksQuery, [userId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const userReadLaterBooks = JSON.parse(results[0].read_later_books || '[]');
+
+    // Actualizează lista de cărți "Citeste Mai Tarziu" în funcție de acțiune (adăugare sau eliminare)
+    if (action === 'add' && !userReadLaterBooks.includes(bookId)) {
+      userReadLaterBooks.push(bookId);
+    } else if (action === 'remove' && userReadLaterBooks.includes(bookId)) {
+      userReadLaterBooks.splice(userReadLaterBooks.indexOf(bookId), 1);
+    }
+
+    // Updatează lista de cărți "Citeste Mai Tarziu" în baza de date
+    await db.execute(updateUserReadLaterBooksQuery, [
+      JSON.stringify(userReadLaterBooks),
+      userId,
+    ]);
+
+    // Re-fetch user's "Citeste Mai Tarziu" books after the update
+    const [updatedResults] = await db.execute(getUserReadLaterBooksQuery, [userId]);
+    const updatedReadLaterBooks = JSON.parse(updatedResults[0].read_later_books || '[]');
+
+    res.status(200).json({ success: true, message: '"Citeste Mai Tarziu" books updated successfully', updatedReadLaterBooks });
+  } catch (error) {
+    console.error('Error updating user "Citeste Mai Tarziu" books:', error);
+    res.status(500).json({ success: false, message: 'Error updating user "Citeste Mai Tarziu" books' });
+  }
+});
+
+// Get "Citeste Mai Tarziu" Books
+app.get('/read-later-books', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.ID;
+
+  // Query pentru a obține lista de cărți "Citeste Mai Tarziu" ale utilizatorului din coloana 'read_later_books'
+  const getUserReadLaterBooksQuery = 'SELECT read_later_books FROM users WHERE ID = ?';
+
+  try {
+    const [results] = await db.execute(getUserReadLaterBooksQuery, [userId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const userReadLaterBooks = JSON.parse(results[0].read_later_books || '[]');
+    res.status(200).json(userReadLaterBooks);
+  } catch (error) {
+    console.error('Error fetching user "Citeste Mai Tarziu" books:', error);
+    res.status(500).json({ success: false, message: 'Error fetching user "Citeste Mai Tarziu" books' });
+  }
+});
+
+
 const PORT = 3002;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
 
-// ... (your existing routes)
+
 

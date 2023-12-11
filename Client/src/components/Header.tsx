@@ -1,16 +1,16 @@
+// Header.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import logo from './logo.png';
 import { useNavigate } from 'react-router-dom';
-
+import './Header.css';
 
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
-    // Check if the user is logged in
     const axiosInstance = axios.create({ withCredentials: true });
 
     axiosInstance.get('http://localhost:3002/check-session')
@@ -21,7 +21,7 @@ const Header = () => {
         console.error('Error checking session:', error);
       })
       .finally(() => {
-        setLoading(false); // Set loading to false in all cases
+        setLoading(false);
       });
   }, []);
 
@@ -42,25 +42,25 @@ const Header = () => {
   };
 
   return (
-    <div>
-      <div className="relative flex flex-row justify-between top-5 mx-14 border-b-2 border-[#070707] pb-5">
-        <div>
-        <Link to="/Meniu"> <img src={logo} className="h-[50px] w-[100px]" alt="Logo"></img> </Link>
-        </div>
-        <div>
-          {loading ? (
-            <p>Loading...</p>
+    <div className="header-container">
+      <div>
+        <Link to="/Meniu" className="logo">
+          <img src={logo} className="h-[50px] w-[100px]" alt="Logo" />
+        </Link>
+      </div>
+      <div className="header-buttons">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          loggedIn ? (
+            <>
+              <Link to="/Account" className="text-2xl text-[#3C2A21]" style={{ fontWeight: 'bold' }}>Cont</Link>
+              <button onClick={handleLogout} className="ml-4">Logout</button>
+            </>
           ) : (
-            loggedIn ? (
-              <>
-                <Link to="/Account" className="text-2xl text-[#3C2A21]" style={{ fontWeight: 'bold' }}>Cont</Link>
-                <button onClick={handleLogout} className="ml-4">Logout</button>
-              </>
-            ) : (
-              <Link to="/Logare" className="text-2xl text-[#3C2A21]" style={{ fontWeight: 'bold' }}>Logare</Link>
-            )
-          )}
-        </div>
+            <Link to="/Logare" className="text-2xl text-[#3C2A21]" style={{ fontWeight: 'bold' }}>Logare</Link>
+          )
+        )}
       </div>
     </div>
   );

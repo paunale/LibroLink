@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
+import './Recomandari.css';
 
 type Book = {
   ID: number;
@@ -18,7 +19,7 @@ const Recomandari: React.FC = () => {
     const fetchRecommendedBooks = async () => {
       try {
         const response = await axios.get('http://localhost:3002/recommended-books', {
-          withCredentials: true, // Include credentials (cookies) with the request
+          withCredentials: true,
         });
 
         if (response.data.success) {
@@ -32,31 +33,30 @@ const Recomandari: React.FC = () => {
     };
 
     fetchRecommendedBooks();
-  }, []); // Run the effect only once when the component mounts
+  }, []);
 
   return (
-    <div className="h-screen bg-[#D5CEA3]">
-      <Header />
-      <div className="relative flex flex-col justify-between gap-y-2 top-32 items-center">
-        <div>
-          <h1 className="text-3xl pb-3" style={{ fontWeight: 'bold' }}>
-            Recomandari
-          </h1>
-        </div>
-        <div>
-          <ul className="flex flex-col space-y-4">
-            {recommendedBooks.map((book) => (
-              <li key={book.ID}>
-                <p>Name: {book.name}</p>
-                <p>Author: {book.author}</p>
-                <p>Genre: {book.genre}</p>
-                <p>Description: {book.description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+    <div className="recomandari-container">
+      <div className="recomandari-background-container">
+      <div className="recomandari-background-image"></div>
     </div>
+      <Header />
+      <div className="recomandari-content">
+        <h1 className="text-3xl pb-20" style={{ fontWeight: 'bold', color: '#e5e5cb' }}>
+          Recomandari
+        </h1>
+        <ul className="recomandari-list">
+          {recommendedBooks.map((book) => (
+            <li key={book.ID} className="recomandari-book">
+              <p>Nume: {book.name}</p>
+              <p>Autor: {book.author}</p>
+              <p>Gen: {book.genre}</p>
+              <p>Descriere: {book.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+      </div>
   );
 };
 

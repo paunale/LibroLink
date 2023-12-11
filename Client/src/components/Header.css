@@ -1,0 +1,29 @@
+/* Stiluri pentru Header */
+.header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #d5cea3;
+    border-bottom: 2px solid #070707;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .logo {
+    text-decoration: none;
+  }
+  
+  .logo img {
+    height: 70px; /* Ajustează înălțimea la valoarea dorită */
+    width: auto; /* Menține proporțiile originale ale imaginii */
+  }
+  
+  .header-buttons {
+    display: flex;
+    align-items: center;
+  }
+  

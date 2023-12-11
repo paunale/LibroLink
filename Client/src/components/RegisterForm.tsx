@@ -77,7 +77,7 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <button className="text-center py-2 text-l" type="button" onClick={handleRegister}>
+          <button className="text-center py-2 text-l scris-ing" type="button" onClick={handleRegister}>
             Creeaza cont
           </button>
         </div>

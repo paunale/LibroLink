@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Header from './components/Header';
+import './Cautare.css';
 
 type Props = {};
 
@@ -35,28 +36,26 @@ const Cautare: React.FC = () => {
   
 
   return (
-    <div className="h-screen bg-[#D5CEA3]">
-      <div>
+    <div className="cautare-container">
+      <div className="cautare-background-image"></div>
+      <div className="cautare-content">
         <Header />
-        <div className="relative flex flex-col justify-between gap-y-2 top-28 items-center">
-          <div>
-            <h1 className="text-3xl pb-16 font-bold">Cauta o carte</h1>
-          </div>
-          <div className="relative flex flex-col justify-between gap-y-2 top-3 items-center">
-            <input
-              className="text-center py-2 px-12 bg-[#E5E5CB] rounded-full"
-              type="text"
-              placeholder="Cautare"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button
-              className="py-2 px-4 bg-[#E5E5CB] text-gray-500 rounded-full"
-              onClick={handleSearch}
-            >
-              Cauta
-            </button>
-      <table className="flex flex-col items-center justify-center space-y-2">
+        <h1 className="text-3xl pb-16 font-bold scris-titlu">Cauta o carte</h1>
+        <div className="flex flex-col items-center gap-y-2">
+          <input
+            className="cautare-input"
+            type="text"
+            placeholder="Cautare"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button
+            className="cautare-button"
+            onClick={handleSearch}
+          >
+            Cauta
+          </button>
+      <table className="flex flex-col items-center justify-center space-y-2 cautare-books-table">
         <thead>
           <tr className="flex flex-row text-center justify-center space-x-2">
             <th>Nume carte</th>
@@ -76,7 +75,6 @@ const Cautare: React.FC = () => {
         ))}
         </tbody>
       </table>
-    </div>
     </div>
     </div>
     </div>

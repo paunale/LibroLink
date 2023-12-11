@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
+import './Account.css';
 
 const genres = [
   'Copii',
   'Poezie',
-  'Crestinism',
+  'Afaceri',
   'Gatit',
   'Fictiune',
   'Istorice',
@@ -13,10 +14,14 @@ const genres = [
   'Mister',
   'Romane',
   'Tineri',
+  'Romantice',
+  'SF',
 ];
 
 const Account: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
 
   const handleGenreSelection = (genre: string) => {
     // Toggle the selected genre
@@ -34,12 +39,19 @@ const Account: React.FC = () => {
 
   const handleSaveGenres = async () => {
     try {
-      const response = await axios.post('http://localhost:3002/update-genres', {
-        genres: selectedGenres,
-      }, {withCredentials: true});
-
+      const response = await axios.post(
+        'http://localhost:3002/update-genres',
+        {
+          genres: selectedGenres,
+        },
+        { withCredentials: true }
+      );
+  
       if (response.data.success) {
-        console.log('Genres saved successfully!');
+        setSuccessMessage('Genurile au fost salvate cu succes!');
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000); // Ascunde mesajul după 3 secunde
       } else {
         console.error('Error saving genres:', response.data.message);
       }
@@ -47,36 +59,40 @@ const Account: React.FC = () => {
       console.error('Error saving genres:', error);
     }
   };
+  
 
   return (
-    <div className="h-screen bg-[#D5CEA3]">
-      <Header />
-      <div className="flex relative top-12 flex-col items-center justify-center">
-        <div className="relative flex flex-col justify-between gap-y-2 top-7 items-center">
-            <h1>Selecteaza genurile de carti preferate (maxim 3)</h1>
+    <div className="account-container">
+      <div className="account-background-image"></div>
+      <div className="account-blur-overlay"></div>
+      <div className="account-box">
+        <Header />
+        <div className="account-content">
+          <h1>Selecteaza genurile de cărți preferate (maxim 3)</h1>
+          <ul className="genres-list">
+            {genres.map((genre) => (
+              <li key={genre}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedGenres.includes(genre)}
+                    onChange={() => handleGenreSelection(genre)}
+                  />
+                  {genre}
+                </label>
+              </li>
+            ))}
+          </ul>
+          <div className="save-button-container">
+            <button className="save-button" onClick={handleSaveGenres}>
+              Salvare
+            </button>
+            <div className="account-content">
+             {successMessage && <p className="success-message">{successMessage}</p>}
+             </div>
+          </div>
         </div>
-        <ul>
-        <div className="relative flex flex-col justify-between gap-y-2 top-12 items-center">
-          {genres.map((genre) => (
-            <li key={genre}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedGenres.includes(genre)}
-                  onChange={() => handleGenreSelection(genre)}
-                />
-                {genre}
-              </label>
-            </li>
-          ))}
-        </div>
-        </ul>
-        <div className="relative flex flex-col justify-between gap-y-2 top-20 items-center">
-        <div className="text-center py-2 px-14 bg-[#E5E5CB] rounded-full">
-        <button onClick={handleSaveGenres}>Salvare</button>
-        </div>
-        </div>
-    </div>
+      </div>
     </div>
   );
 };

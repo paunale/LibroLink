@@ -1,0 +1,68 @@
+.logare-container {
+    height: 100vh;
+    background-color: #d5cea3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('poza_fundal.jpg'); /* Înlocuiește cu calea către imaginea ta */
+    background-size: cover;
+  }
+  
+  .blur-overlay {
+    position: absolute;
+    top: 50%; /* Poziționează pe mijlocul vertical */
+    left: 50%; /* Poziționează pe mijlocul orizontal */
+    transform: translate(-50%, -50%); /* Adu în mijlocul imaginii */
+    width: 30%; /* Ajustează dimensiunile patratului */
+    height: 30%; /* Ajustează dimensiunile patratului */
+    filter: blur(5px); /* Ajustează valoarea blurului după preferință */
+  }
+  
+  .login-box {
+    position: relative;
+    z-index: 1; /* Asigură-te că login-box este deasupra blur-overlay */
+    background-color: rgba(0, 0, 0, 0.5); /* Patratul negru cu opacitate */
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .logo {
+    text-decoration: none;
+    color: #E5E5CB;
+    font-size: 4rem;
+    font-weight: bold;
+  }
+  
+  .login-content {
+    padding: 12px;
+    color: #E5E5CB;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .create-account-button {
+    position: absolute;
+    top: 50px; /* Distanța față de partea de sus a containerului */
+    right: 10px; /* Distanța față de partea dreaptă a containerului */
+    padding: 8px 16px;
+    background-color: #e5e5cb;
+    border-radius: 20px;
+  }
+
+  .login-button {
+    color: #e5e5cb; /* Culoarea dorită pentru text */
+  }
+
+  

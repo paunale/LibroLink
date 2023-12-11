@@ -74,8 +74,8 @@ const LoginForm = () => {
             className="bg-[#E5E5CB] text-center rounded-full"
           />
         </div>
-        <div>
-          <button className="text-center py-2 text-l" type="button" onClick={handleLogin}>
+        <div >
+          <button className="text-center py-2 text-l login-button" type="button" onClick={handleLogin}>
             Login
           </button>
         </div>
