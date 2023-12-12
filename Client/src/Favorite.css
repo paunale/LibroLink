@@ -25,22 +25,24 @@
     position: relative;
     z-index: 1;
     text-align: center;
-    margin-top: 50px; /* Spațiu între antet și conținutul butoanelor */
+    margin-top: 170px; /* Spațiu între antet și conținutul butoanelor */
   }
 
   .favorite-list {
     list-style: none;
     padding: 0;
     display: flex;
-    flex-wrap: wrap; /* Acomodează elementele pe mai multe linii dacă spațiul nu este suficient */
-    justify-content: center; /* Așează elementele în centru orizontal */
+    overflow-x: auto; /* Permite derularea orizontală dacă elementele nu încap pe ecran */
   }
-
+  
   .favorite-book {
     background-color: #d5cea3;
     border: 1px solid black;
     padding: 20px;
     margin: 10px; /* Ajustează marginea între cărți */
     border-radius: 30px;
-    flex-basis: calc(33.33% - 20px);
+    flex: 0 0 auto; /* Permite elementelor să aibă dimensiunea lor naturală, fără a se extinde */
+    max-width: 300px; /* Specifică o lățime maximă pentru fiecare carte, dacă dorești */
   }
+  
+  

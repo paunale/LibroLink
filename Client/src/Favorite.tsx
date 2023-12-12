@@ -76,44 +76,46 @@ const Favorite: React.FC = () => {
       <div className="favorite-background-image"></div>
       <div className="favorite-content">
       <Header />
-      <h1 className="text-3xl pb-20" style={{ fontWeight: 'bold', color: '#e5e5cb' }}>
+      <h1 className="text-3xl pb-10" style={{ fontWeight: 'bold', color: '#e5e5cb' }}>
           Lista de favorite
         </h1>
-      {favoriteBooks.length > 0 ? (
-  favoriteBooks.map((book, index) => (
-    <div key={`${book?.ID}-${index}`} className="mb-4">
-      {book && (
-        <div className="mb-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 scris-carte">{book.name}</h1>
-            <p className="text-lg">
-              <span className="font-bold">Autor:</span> {book.author}
-            </p>
+        {favoriteBooks.length > 0 ? (
+  <ul className="favorite-list">
+    {favoriteBooks.map((book, index) => (
+      <li key={`${book?.ID}-${index}`} className="favorite-book">
+        {book && (
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 scris-carte">{book.name}</h1>
+              <p className="text-lg">
+                <span className="font-bold">Autor:</span> {book.author}
+              </p>
+            </div>
+            {/* Add favorite button logic here */}
           </div>
-          {/* Add favorite button logic here */}
-        </div>
-      )}
-      {book && (
-        <>
-          <div className="mb-4">
-            <p className="text-lg">
-              <span className="font-bold">Gen:</span> {book.genre}
-            </p>
-          </div>
-          <div className="mb-4">
-            <p className="text-lg">
-              <span className="font-bold">Descriere:</span> {book.description}
-            </p>
-          </div>
-          <div className="mb-4">
-            <p className="text-lg">
-              <span className="font-bold">Numar reviews:</span> {book.num_reviews}
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  ))
+        )}
+        {book && (
+          <>
+            <div className="mb-4">
+              <p className="text-lg">
+                <span className="font-bold">Gen:</span> {book.genre}
+              </p>
+            </div>
+            <div className="mb-4">
+              <p className="text-lg">
+                <span className="font-bold">Descriere:</span> {book.description}
+              </p>
+            </div>
+            <div className="mb-4">
+              <p className="text-lg">
+                <span className="font-bold">Numar reviews:</span> {book.num_reviews}
+              </p>
+            </div>
+          </>
+        )}
+      </li>
+    ))}
+  </ul>
 ) : (
   <p>Nu ai cărți favorite</p>
 )}

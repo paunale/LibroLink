@@ -42,7 +42,7 @@ const Recomandari: React.FC = () => {
     </div>
       <Header />
       <div className="recomandari-content">
-        <h1 className="text-3xl pb-20" style={{ fontWeight: 'bold', color: '#e5e5cb' }}>
+        <h1 className="text-3xl pb-10" style={{ fontWeight: 'bold', color: '#e5e5cb' }}>
           Recomandari
         </h1>
         <ul className="recomandari-list">

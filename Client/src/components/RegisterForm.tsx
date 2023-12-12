@@ -22,7 +22,7 @@ const RegisterForm = () => {
 
       if (response.status === 200 && response.data.success) {
         // Redirect to the desired page upon successful registration
-        navigate('/Meniu'); // Replace '/dashboard' with your desired route
+        navigate('/Logare'); // Replace '/dashboard' with your desired route
       } else {
         // Handle other cases, e.g., show an error message
         console.error('Registration failed:', response.data.message);

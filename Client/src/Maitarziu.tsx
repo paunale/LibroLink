@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Header from "./components/Header";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Header from './components/Header';
 import './MaiTarziu.css';
 
 type Book = {
@@ -17,14 +17,11 @@ interface BookResponse {
   book: Book;
 }
 
-type MaitarziuProps = {};
-
-function Maitarziu({}: MaitarziuProps) {
+const ReadLater: React.FC = () => {
   const [readLaterBooks, setReadLaterBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch "Citeste Mai Tarziu" books from the server
     const fetchReadLaterBooks = async () => {
       try {
         const response = await axios.get<number[]>(`http://localhost:3002/read-later-books`, {
@@ -59,7 +56,6 @@ function Maitarziu({}: MaitarziuProps) {
       );
 
       if (response.data.success) {
-        // Update the local state after successful removal
         setReadLaterBooks((prevBooks) => prevBooks.filter((book) => book.ID !== bookId));
       } else {
         console.error('Failed to remove book from "Citeste Mai Tarziu".');
@@ -80,26 +76,30 @@ function Maitarziu({}: MaitarziuProps) {
         <Header />
         <div className="relative flex flex-col justify-between gap-y-2 top-32 items-center">
           <div>
-            <h1 className="text-3xl pb-3" style={{ fontWeight: 'bold' }}>
+            <h1 className="text-3xl pb-3" style={{ fontWeight: 'bold' ,color: '#e5e5cb' }}>
               Citeste mai tarziu
             </h1>
             {readLaterBooks.length > 0 ? (
               <ul>
                 {readLaterBooks.map((book) => (
-                  <li key={book.ID}>
-                    {book.name}{' '}
-                    <button onClick={() => handleRemoveFromReadLater(book.ID)}>Remove</button>
+                  <li key={book.ID} className="maitarziu-book">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p>{book.name}</p>
+                        <button onClick={() => handleRemoveFromReadLater(book.ID)}>Remove</button>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>Nu ai cărți pentru "Citeste Mai Tarziu"</p>
+              <p style={{color: '#e5e5cb' }}>Nu ai cărți pentru "Citeste Mai Tarziu"</p>
             )}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default Maitarziu;
+export default ReadLater;
