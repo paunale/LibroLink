@@ -41,19 +41,50 @@ const Book: React.FC = () => {
   const [isReadLater, setIsReadLater] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const response = await axios.get<BookResponse>(`http://localhost:3002/books/${bookId}`);
-
+  
         if (response.data && response.data.success) {
           setBook(response.data.book);
+  
+          // Check user authentication status
           const isAuthenticated = await checkAuthentication();
           setIsAuthenticated(isAuthenticated);
-          setIsFavorite(response.data.book.isFavorite);
+  
+          // Fetch the user's favorite books
+          const favoriteBooksResponse = await axios.get<number[]>(`http://localhost:3002/favorite-books`, {
+            withCredentials: true,
+          });
+  
+          // Check if the current book is in the user's favorite books
+          const isBookInFavorites = favoriteBooksResponse.data.includes(response.data.book.ID);
+          
+          // Set isFavorite based on whether the book is in the user's favorite books
+          setIsFavorite(isBookInFavorites);
+
+          // Fetch the user's "Citeste Mai Tarziu" books
+          const readLaterBooksResponse = await axios.get<number[]>(`http://localhost:3002/late-books`, {
+            withCredentials: true,
+          });
+
+          // Check if the current book is in the user's "Citeste Mai Tarziu" books
+          const isBookInReadLater = readLaterBooksResponse.data.includes(response.data.book.ID);
+
+          // Set isReadLater based on whether the book is in the user's "Citeste Mai Tarziu" books
+          setIsReadLater(isBookInReadLater);
+  
+          // Fetch reviews for the book
+          try{
           const reviewsResponse = await axios.get(`http://localhost:3002/reviews/${bookId}`);
           setReviews(reviewsResponse.data.reviews);
+          }
+          catch(error) {
+            console.error('Cartea nu are review-uri');
+          }
         } else {
           console.error('Error fetching book:', response.data.message);
           setBook(null);
@@ -65,20 +96,7 @@ const Book: React.FC = () => {
         setLoading(false);
       }
     };
-
-    const fetchReadLaterStatus = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3002/read-later-status/${bookId}`, {
-          withCredentials: true,
-        });
-        setIsReadLater(response.data.isReadLater);
-      } catch (error) {
-        console.error('Error fetching "Citeste Mai Tarziu" status:', error);
-      }
-    };
-
     fetchBook();
-    fetchReadLaterStatus();
   }, [bookId]);
 
   const handleToggleFavorite = async () => {
@@ -109,7 +127,7 @@ const Book: React.FC = () => {
         return;
       }
 
-      await axios.post(`http://localhost:3002/update-read-later-books`, {
+      await axios.post(`http://localhost:3002/update-late-books`, {
         bookId: book?.ID,
         action: isReadLater ? 'remove' : 'add',
       }, { withCredentials: true });
@@ -119,7 +137,7 @@ const Book: React.FC = () => {
       console.error('Error toggling "Citeste Mai Tarziu":', error);
     }
   };
-
+  
   const handleReviewSubmit = async () => {
     try {
       const isAuthenticated = await checkAuthentication();
@@ -129,6 +147,13 @@ const Book: React.FC = () => {
       }
 
       await axios.post(`http://localhost:3002/makereview/${bookId}`, { text: reviewText, rating }, { withCredentials: true });
+      try{
+        const reviewsResponse = await axios.get(`http://localhost:3002/reviews/${bookId}`);
+        setReviews(reviewsResponse.data.reviews);
+        }
+        catch(error) {
+          console.error('Cartea nu are review-uri');
+        }
     } catch (error) {
       console.error('Error submitting review:', error);
     } finally {
@@ -136,12 +161,28 @@ const Book: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    // Calculate average rating from reviews
+    const calculateAverageRating = () => {
+      if (reviews.length > 0) {
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        const avgRating = totalRating / reviews.length;
+        setAverageRating(avgRating);
+      } else {
+        setAverageRating(null);
+      }
+    };
+
+    // Call the function to calculate average rating
+    calculateAverageRating();
+  }, [reviews]);
+
   if (loading) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div className="bg-[#D5CEA3] h-screen">
+    <div className="bg-[#D5CEA3] h-[100%]">
       <Header />
       <div className="container mx-auto px-4 py-8 book-content">
         {book ? (
@@ -188,6 +229,12 @@ const Book: React.FC = () => {
           <p>Eroare la încărcare</p>
         )}
 
+{averageRating !== null && (
+          <div className="mt-8">
+            <p className="text-2xl font-bold mb-4">Medie review-uri: {averageRating.toFixed(2)}</p>
+          </div>
+        )}
+
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Adaugă un review</h2>
           <div className="mb-4">
@@ -222,9 +269,9 @@ const Book: React.FC = () => {
       </div>
 
       {reviews.length > 0 && (
-        <div className="mt-8">
+        <div className="flex flex-col justify-center items-center text-center">
           <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-          <ul>
+          <ul className="flex flex-col space-y-2">
             {reviews.map((review: any, index: number) => (
               <li key={index}>
                 <p>Rating: {review.rating}</p>

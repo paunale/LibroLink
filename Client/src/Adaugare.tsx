@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
 import './Adaugare.css';
+import { useNavigate } from 'react-router-dom';
 
 const Adaugare: React.FC = () => {
   const [bookData, setBookData] = useState({
@@ -16,15 +17,13 @@ const Adaugare: React.FC = () => {
   };
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
   const handleAddBook = async () => {
     try {
       const response = await axios.post('http://localhost:3002/add-book', bookData);
 
       if (response.data.success) {
-        setSuccessMessage('Cartea a fost adăugată cu succes!');
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 3000); // Ascunde mesajul după 3 secunde
+        navigate('/Meniu');
       } else {
         console.error('Error adding book:', response.data.message);
       }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
 import './Recomandari.css';
+import { Link } from 'react-router-dom';
 
 type Book = {
   ID: number;
@@ -48,7 +49,9 @@ const Recomandari: React.FC = () => {
         <ul className="recomandari-list">
           {recommendedBooks.map((book) => (
             <li key={book.ID} className="recomandari-book">
-              <p>Nume: {book.name}</p>
+              <Link to={`/Book/${book.ID}`}>
+              <h1 className="text-4xl font-bold mb-2 scris-carte">{book.name}</h1>
+              </Link>
               <p>Autor: {book.author}</p>
               <p>Gen: {book.genre}</p>
               <p>Descriere: {book.description}</p>

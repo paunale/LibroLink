@@ -474,6 +474,7 @@ app.post('/makereview/:bookId', ensureAuthenticated, async (req, res) => {
     // Insert the review into the reviews database
     const insertReviewQuery = 'INSERT INTO reviews (book_id, review_text, rating) VALUES (?, ?, ?)';
     await db.execute(insertReviewQuery, [bookId, text, rating]);
+    await db.execute('UPDATE books SET num_reviews = num_reviews + 1 WHERE ID = ?', [bookId]);
 
     res.status(200).json({ success: true, message: 'Review added successfully' });
   } catch (error) {
@@ -550,6 +551,8 @@ app.get('/favorite-books', ensureAuthenticated, async (req, res) => {
   }
 });
 
+
+/*Reviews*/
 app.get('/reviews/:bookId', async (req, res) => {
   const { bookId } = req.params;
 
@@ -577,68 +580,69 @@ app.get('/reviews/:bookId', async (req, res) => {
 
 
 // Update "Citeste Mai Tarziu" Books
-app.post('/update-read-later-books', ensureAuthenticated, async (req, res) => {
+app.post('/update-late-books', ensureAuthenticated, async (req, res) => {
   const userId = req.user.ID;
   const { bookId, action } = req.body;
 
-  // Query pentru a obține și actualiza lista de cărți "Citeste Mai Tarziu" ale utilizatorului
-  const getUserReadLaterBooksQuery = 'SELECT read_later_books FROM users WHERE ID = ?';
-  const updateUserReadLaterBooksQuery = 'UPDATE users SET read_later_books = ? WHERE ID = ?';
+  // Query pentru a obține și actualiza lista de cărți favorite ale utilizatorului
+  const getUserLateBooksQuery = 'SELECT late_books FROM users WHERE ID = ?';
+  const updateUserLateBooksQuery = 'UPDATE users SET late_books = ? WHERE ID = ?';
 
   try {
-    const [results] = await db.execute(getUserReadLaterBooksQuery, [userId]);
+    const [results] = await db.execute(getUserLateBooksQuery, [userId]);
 
     if (results.length === 0) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const userReadLaterBooks = JSON.parse(results[0].read_later_books || '[]');
+    const userLateBooks = JSON.parse(results[0].late_books || '[]');
 
-    // Actualizează lista de cărți "Citeste Mai Tarziu" în funcție de acțiune (adăugare sau eliminare)
-    if (action === 'add' && !userReadLaterBooks.includes(bookId)) {
-      userReadLaterBooks.push(bookId);
-    } else if (action === 'remove' && userReadLaterBooks.includes(bookId)) {
-      userReadLaterBooks.splice(userReadLaterBooks.indexOf(bookId), 1);
+    // Actualizează lista de cărți în funcție de acțiune (adăugare sau eliminare)
+    if (action === 'add' && !userLateBooks.includes(bookId)) {
+      userLateBooks.push(bookId);
+    } else if (action === 'remove' && userLateBooks.includes(bookId)) {
+      userLateBooks.splice(userLateBooks.indexOf(bookId), 1);
     }
 
-    // Updatează lista de cărți "Citeste Mai Tarziu" în baza de date
-    await db.execute(updateUserReadLaterBooksQuery, [
-      JSON.stringify(userReadLaterBooks),
+    // Updatează lista de cărți în baza de date
+    await db.execute(updateUserLateBooksQuery, [
+      JSON.stringify(userLateBooks),
       userId,
     ]);
 
-    // Re-fetch user's "Citeste Mai Tarziu" books after the update
-    const [updatedResults] = await db.execute(getUserReadLaterBooksQuery, [userId]);
-    const updatedReadLaterBooks = JSON.parse(updatedResults[0].read_later_books || '[]');
+    // Re-fetch user's books after the update
+    const [updatedResults] = await db.execute(getUserLateBooksQuery, [userId]);
+    const updatedLateBooks = JSON.parse(updatedResults[0].late_books || '[]');
 
-    res.status(200).json({ success: true, message: '"Citeste Mai Tarziu" books updated successfully', updatedReadLaterBooks });
+    res.status(200).json({ success: true, message: 'Late books updated successfully', updatedLateBooks });
   } catch (error) {
-    console.error('Error updating user "Citeste Mai Tarziu" books:', error);
-    res.status(500).json({ success: false, message: 'Error updating user "Citeste Mai Tarziu" books' });
+    console.error('Error updating user late books:', error);
+    res.status(500).json({ success: false, message: 'Error updating user late books' });
   }
 });
 
-// Get "Citeste Mai Tarziu" Books
-app.get('/read-later-books', ensureAuthenticated, async (req, res) => {
+
+app.get('/late-books', ensureAuthenticated, async (req, res) => {
   const userId = req.user.ID;
 
-  // Query pentru a obține lista de cărți "Citeste Mai Tarziu" ale utilizatorului din coloana 'read_later_books'
-  const getUserReadLaterBooksQuery = 'SELECT read_later_books FROM users WHERE ID = ?';
+  // Query pentru a obține lista de cărți ale utilizatorului din coloana 'favorite_books'
+  const getUserLateBooksQuery = 'SELECT late_books FROM users WHERE ID = ?';
 
   try {
-    const [results] = await db.execute(getUserReadLaterBooksQuery, [userId]);
+    const [results] = await db.execute(getUserLateBooksQuery, [userId]);
 
     if (results.length === 0) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const userReadLaterBooks = JSON.parse(results[0].read_later_books || '[]');
-    res.status(200).json(userReadLaterBooks);
+    const userLateBooks = JSON.parse(results[0].late_books || '[]');
+    res.status(200).json(userLateBooks);
   } catch (error) {
-    console.error('Error fetching user "Citeste Mai Tarziu" books:', error);
-    res.status(500).json({ success: false, message: 'Error fetching user "Citeste Mai Tarziu" books' });
+    console.error('Error fetching user late books:', error);
+    res.status(500).json({ success: false, message: 'Error fetching user late books' });
   }
 });
+
 
 
 const PORT = 3002;

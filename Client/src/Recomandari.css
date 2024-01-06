@@ -40,7 +40,6 @@
     padding: 0;
     display: flex;
     flex-wrap: wrap; /* Acomodează elementele pe mai multe linii dacă spațiul nu este suficient */
-    justify-content: center; /* Așează elementele în centru orizontal */
   }
   
   .recomandari-book {
@@ -49,6 +48,7 @@
     padding: 20px;
     margin: 10px; /* Ajustează marginea între cărți */
     border-radius: 30px;
-    flex-basis: calc(33.33% - 20px);
+    flex: 0 0 auto; /* Permite elementelor să aibă dimensiunea lor naturală, fără a se extinde */
+    max-width: 300px; /* Specifică o lățime maximă pentru fiecare carte, dacă dorești */
   }
   

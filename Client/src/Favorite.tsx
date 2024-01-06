@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
 import './Favorite.css';
+import { Link } from 'react-router-dom';
 
 interface Book {
   ID: number;
@@ -86,7 +87,9 @@ const Favorite: React.FC = () => {
         {book && (
           <div className="flex justify-between items-center">
             <div>
+            <Link to={`/Book/${book.ID}`}>
               <h1 className="text-4xl font-bold mb-2 scris-carte">{book.name}</h1>
+            </Link>
               <p className="text-lg">
                 <span className="font-bold">Autor:</span> {book.author}
               </p>
